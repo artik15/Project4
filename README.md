@@ -3,7 +3,6 @@ Carla and Ros integration with hardware system
 
 
 # Useful commands
-
 ## Building
 Get into catkin workspace
 ```
@@ -14,6 +13,11 @@ Build
 ```
 catkin_make
 ```
+After building the workspace you have to source the setup file
+```
+source /home/pi/catkin_ws/devel/setup.bash
+```
+
 ## Ros commands
 ```
 rostopic pub/echo/list - ros topic commands
