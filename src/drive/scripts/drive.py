@@ -1,18 +1,27 @@
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import String, Int32
 
-def drive():
-    pub = rospy.Publisher('chatter', String, queue_size=10)
-    rospy.init_node('drive', anonymous=True)
-    rate = rospy.Rate(10) # 10hz
-    while not rospy.is_shutdown():
-        hello_str = "hello world %s" % rospy.get_time()
-        rospy.loginfo(hello_str)
-        pub.publish(hello_str)
-        rate.sleep()
+
+class drive_Node:
+    def __init__(self):
+        print('Hello package')
+        rospy.Subscriber("/test_topic", Int32, self.msg_callback, queue_size=10)
+        self.pub_msg = rospy.Publisher("/test_topic", String, queue_size=10)
+        rospy.Timer(rospy.Duration(0.1), self.timer_callback)
+        
+    def timer_callback(self, event):
+        msg = String()
+        msg.data = 'Hello'
+        self.pub_msg.publish(msg)
+    
+    def msg_callback(self, msg):
+        num = int(msg.data)
+        rospy.loginfo('new message! %d', num)
+    
+    def main(self):
+        rospy.spin()
 
 if __name__ == '__main__':
-    try:
-        drive()
-    except rospy.ROSInterruptException:
-        pass
+    rospy.init_node('drive_node')
+    node = drive_Node()
+    node.main()
