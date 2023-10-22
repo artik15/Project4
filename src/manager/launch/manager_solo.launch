@@ -1,0 +1,5 @@
+<launch>
+    
+    <node pkg="manager" name="manager" type="manager_node.py"/>
+
+</launch>
