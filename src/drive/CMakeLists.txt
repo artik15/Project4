@@ -10,6 +10,8 @@ project(drive)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
+  carla_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions

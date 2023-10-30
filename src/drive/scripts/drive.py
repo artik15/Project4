@@ -1,27 +1,41 @@
+#!/usr/bin/env python
+
 import rospy
-from std_msgs.msg import String, Int32
+from std_msgs.msg import Float32
+from manager.msg import SpeedControl
 
-
-class drive_Node:
+class DriveNode:
     def __init__(self):
-        print('Hello package')
-        rospy.Subscriber("/test_topic", Int32, self.msg_callback, queue_size=10)
-        self.pub_msg = rospy.Publisher("/test_topic", String, queue_size=10)
-        rospy.Timer(rospy.Duration(0.1), self.timer_callback)
-        
-    def timer_callback(self, event):
-        msg = String()
-        msg.data = 'Hello'
-        self.pub_msg.publish(msg)
-    
-    def msg_callback(self, msg):
-        num = int(msg.data)
-        rospy.loginfo('new message! %d', num)
-    
-    def main(self):
-        rospy.spin()
+        # Initialize the DriveNode as a ROS node.
+        rospy.init_node("drive_node")
 
-if __name__ == '__main__':
-    rospy.init_node('drive_node')
-    node = drive_Node()
-    node.main()
+        # Create a subscriber for the "speed control" topic.
+        rospy.Subscriber("/drive/speed_control", SpeedControl, self.speed_control_callback)
+
+        # Create a publisher for the "/manager/speed_control" topic.
+        self.manager_speed_control_pub = rospy.Publisher("/manager/speed_control", SpeedControl, queue_size=10)
+    ### example
+    # Callback function for the "speed control" topic.
+    def speed_control_callback(self, msg):
+        if msg.enabled:
+            # Set a constant desired speed (e.g., 5.0 m/s)
+            desired_speed = 5.0  # You can change this to your desired speed
+
+            # Send the desired speed as a command to the manager
+            self.send_manager_speed_cmd(desired_speed)
+
+            # Log the desired speed
+            rospy.loginfo("Desired Speed: %.2f", desired_speed)
+        else:
+            pass
+
+    # Function to send speed commands to the manager
+    def send_manager_speed_cmd(self, speed):
+        msg = SpeedControl()
+        msg.enabled = True  # Enable speed control
+        msg.speed = speed
+        self.manager_speed_control_pub.publish(msg)
+
+if __name__ == "__main__":
+    drive_node = DriveNode()
+    rospy.spin()

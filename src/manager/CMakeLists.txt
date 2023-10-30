@@ -52,6 +52,7 @@ add_message_files(
   FILES
   SpeedControl.msg
   SteeringControl.msg
+  manager.msg
 )
 
 ## Generate services in the 'srv' folder

@@ -1,27 +1,41 @@
+#!/usr/bin/env python
+
 import rospy
-from std_msgs.msg import String, Int32
+from manager.msg import SteeringControl  # Import the SteeringControl message type
 
-
-class steering_Node:
+class SteeringNode:
     def __init__(self):
-        print('Hello package')
-        rospy.Subscriber("/test_topic", Int32, self.msg_callback, queue_size=10)
-        self.pub_msg = rospy.Publisher("/test_topic", String, queue_size=10)
-        rospy.Timer(rospy.Duration(0.1), self.timer_callback)
-        
-    def timer_callback(self, event):
-        msg = String()
-        msg.data = 'Hello'
-        self.pub_msg.publish(msg)
-    
-    def msg_callback(self, msg):
-        num = int(msg.data)
-        rospy.loginfo('new message! %d', num)
-    
-    def main(self):
-        rospy.spin()
+        # Initialize the SteeringNode as a ROS node.
+        rospy.init_node("steering_node")
 
-if __name__ == '__main__':
-    rospy.init_node('steering_node')
-    node = steering_Node()
-    node.main()
+        # Create a subscriber for the "steering control" topic.
+        rospy.Subscriber("/steering/steering_control", SteeringControl, self.steering_control_callback)
+
+        # Create a publisher for the "steering control" topic.
+        self.steering_control_pub = rospy.Publisher("/manager/steering_control", SteeringControl, queue_size=10)
+    ### example
+    # Callback function for the "steering control" topic.
+    def steering_control_callback(self, msg):
+        if msg.enabled:
+            # Set a constant desired steering angle (e.g., 0.1 radians)
+            desired_steering = 0.1  # You can change this to your desired angle
+
+            # Send the desired steering angle as a command
+            self.send_steering_cmd(desired_steering)
+
+            # Log the desired steering angle
+            rospy.loginfo("Desired Steering Angle: %.2f", desired_steering)
+        else:
+            # Steering control is disabled, you might want to set the steering angle to 0
+            self.send_steering_cmd(0.0)
+
+    # Function to send steering commands to the manager
+    def send_steering_cmd(self, angle):
+        msg = SteeringControl()
+        msg.enabled = True  # Enable steering control
+        msg.angle = angle
+        self.steering_control_pub.publish(msg)
+
+if __name__ == "__main__":
+    steering_node = SteeringNode()
+    rospy.spin()
