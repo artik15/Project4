@@ -1,2 +1,0 @@
-drive:manager:steering
--DCATKIN_DEVEL_PREFIX=/home/jong/Project4/devel -DCMAKE_INSTALL_PREFIX=/home/jong/Project4/install -G Unix Makefiles
