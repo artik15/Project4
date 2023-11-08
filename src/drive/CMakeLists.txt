@@ -161,7 +161,7 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
  catkin_install_python(PROGRAMS
-   scripts/drive_node.py
+   scripts/drive.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 

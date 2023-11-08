@@ -6,7 +6,6 @@ from std_msgs.msg import Float32
 
 class DriveNode:
     def __init__(self):
-        self.control_enabled = False
         # Initialize the DriveNode as a ROS node.
         rospy.init_node("drive_node")
 
@@ -14,26 +13,29 @@ class DriveNode:
         rospy.Subscriber("/drive/speed_control", SpeedControl, self.speed_control_callback)
 
         # Create a publisher for the "desired_speed" topic.
-        self.desired_speed_pub = rospy.Publisher("/manager/throttle", Float32, queue_size=10)
+        self.desired_speed_pub = rospy.Publisher("/drive/desired_speed", Float32, queue_size=10)
 
     # Callback function for the "drive/speed_control" topic.
     def speed_control_callback(self, msg):
-        self.control_enabled = msg.enabled
-        # Set the received speed command as the desired speed
-        self.desired_speed = msg.speed
-        # Log the desired speed
-        rospy.loginfo("Desired Speed: %.2f", self.desired_speed)
+        if msg.enabled:
+            # Set the received speed command as the desired speed
+            desired_speed = msg.speed
+
+            # Publish the desired speed
+            self.desired_speed_pub.publish(Float32(desired_speed))
+
+            # Perform other actions based on the desired speed
+            self.perform_drive_action(desired_speed)
+
+            # Log the desired speed
+            rospy.loginfo("Desired Speed: %.2f", desired_speed)
+        else:
+            pass
 
     # Function to perform drive actions based on the desired speed
-    def perform_drive_action(self):
+    def perform_drive_action(self, desired_speed):
         # Implement your custom drive actions here based on the desired speed
         pass
-
-    def run(self):
-        loop = rospy.Rate(10.0) # frequency in Hz
-        while not rospy.is_shutdown():
-            self.perform_drive_action()
-            loop.sleep()
 
 if __name__ == "__main__":
     drive_node = DriveNode()
