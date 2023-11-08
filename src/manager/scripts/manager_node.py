@@ -19,14 +19,16 @@ class ManagerNode:
         self.steering_control_pub = rospy.Publisher("/steering/steering_control", SteeringControl, queue_size=10)
 
         ### Init all subscribers
-        rospy.Subscriber("/test_topic", String, self.sample_callback)
         rospy.Subscriber("/manager/speed_control", SpeedControl, self.speed_control_callback)
         rospy.Subscriber("/carla/ego_vehile/vehicle_status", CarlaEgoVehicleStatus, self.current_velocity_callback)
         rospy.Subscriber("/manager/throttle", Float32, self.received_throttle_callback)
         rospy.Subscriber("/manager/steering_control", SteeringControl, self.steering_control_callback)
         rospy.Subscriber("/manager/steering", Float32, self.received_steering_callback)
 
+        
+
     ### Subscriber callbacks    
+
     def current_velocity_callback(self, msg: CarlaEgoVehicleStatus):
         self.current_velocity_pub.publish(Float32(msg.velocity))
 
@@ -43,9 +45,6 @@ class ManagerNode:
 
     def received_steering_callback(self, msg: Float32):
         self.update_steering(msg.data)
-
-    def sample_callback(self, msg):
-        print(msg)
 
     ### Steering control
     def enable_steering_control(self, enable: bool):
