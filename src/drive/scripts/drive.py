@@ -1,41 +1,40 @@
 #!/usr/bin/env python
 
 import rospy
-from manager.msg import SpeedControl
 from std_msgs.msg import Float32
+from manager.msg import SpeedControl
 
 class DriveNode:
     def __init__(self):
         # Initialize the DriveNode as a ROS node.
         rospy.init_node("drive_node")
 
-        # Create a subscriber for the "drive/speed_control" topic.
+        # Create a subscriber for the "speed control" topic.
         rospy.Subscriber("/drive/speed_control", SpeedControl, self.speed_control_callback)
 
-        # Create a publisher for the "desired_speed" topic.
-        self.desired_speed_pub = rospy.Publisher("/drive/desired_speed", Float32, queue_size=10)
-
-    # Callback function for the "drive/speed_control" topic.
+        # Create a publisher for the "/manager/speed_control" topic.
+        self.manager_speed_control_pub = rospy.Publisher("/manager/speed_control", SpeedControl, queue_size=10)
+    ### example
+    # Callback function for the "speed control" topic.
     def speed_control_callback(self, msg):
         if msg.enabled:
-            # Set the received speed command as the desired speed
-            desired_speed = msg.speed
+            # Set a constant desired speed (e.g., 5.0 m/s)
+            desired_speed = 5.0  # You can change this to your desired speed
 
-            # Publish the desired speed
-            self.desired_speed_pub.publish(Float32(desired_speed))
-
-            # Perform other actions based on the desired speed
-            self.perform_drive_action(desired_speed)
+            # Send the desired speed as a command to the manager
+            self.send_manager_speed_cmd(desired_speed)
 
             # Log the desired speed
             rospy.loginfo("Desired Speed: %.2f", desired_speed)
         else:
             pass
 
-    # Function to perform drive actions based on the desired speed
-    def perform_drive_action(self, desired_speed):
-        # Implement your custom drive actions here based on the desired speed
-        pass
+    # Function to send speed commands to the manager
+    def send_manager_speed_cmd(self, speed):
+        msg = SpeedControl()
+        msg.enabled = True  # Enable speed control
+        msg.speed = speed
+        self.manager_speed_control_pub.publish(msg)
 
 if __name__ == "__main__":
     drive_node = DriveNode()

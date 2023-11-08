@@ -1,2 +1,0 @@
-bool enabled
-float32 steering_angle
