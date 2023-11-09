@@ -20,7 +20,7 @@ class ManagerNode:
 
         ### Init all subscribers
         rospy.Subscriber("/manager/speed_control", SpeedControl, self.speed_control_callback)
-        rospy.Subscriber("/carla/ego_vehile/vehicle_status", CarlaEgoVehicleStatus, self.current_velocity_callback)
+        rospy.Subscriber("/carla/ego_vehicle/vehicle_status", CarlaEgoVehicleStatus, self.current_velocity_callback)
         rospy.Subscriber("/manager/throttle", Float32, self.received_throttle_callback)
         rospy.Subscriber("/manager/steering_control", SteeringControl, self.steering_control_callback)
         rospy.Subscriber("/manager/steering", Float32, self.received_steering_callback)
