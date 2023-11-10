@@ -50,7 +50,7 @@ class ManagerNode:
     def enable_steering_control(self, enable: bool):
         self.steering_control = enable
         if not enable:
-            self.update_throttle(0.0)
+            self.update_steering(0.0)
 
     def send_steering_cmd(self, msg: SteeringControl):
         if self.steering_control:

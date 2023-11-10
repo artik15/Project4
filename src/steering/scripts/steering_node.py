@@ -5,41 +5,46 @@ from manager.msg import SteeringControl
 from std_msgs.msg import Float32
 
 class SteeringNode:
-    def __init__(self):
+    def __init__(self) -> None:
         self.steering_control: bool = False
-        # Initialize the DriveNode as a ROS node.
-        rospy.init_node("steering_node")
+        self.desired_steering = SteeringControl()
 
-        # Create a subscriber for the "steering/steering_control" topic.
+    def init_communication(self) -> None:
+        self.steer_pub = rospy.Publisher("/manager/steering", Float32, queue_size=10)
         rospy.Subscriber("/steering/steering_control", SteeringControl, self.steering_control_callback)
 
-        # Create a publisher for the "new_steering" topic.
-        self.steer_pub = rospy.Publisher("/manager/steering", Float32, queue_size=10)
-
-    
-    # Callback function for the "drive/steering_control" topic.
     def steering_control_callback(self, msg):
         self.enable_steering_control(msg.enabled)
-        self.calculate_steering(msg)
-    def enable_steering_control(self,  enable: bool):
+        self.desired_steering = msg
+
+    def enable_steering_control(self, enable: bool):
         self.steering_control = enable
 
-    # Calculate steering on control system
     def calculate_steering(self, msg: SteeringControl):
+            if self.steering_control:
+                
+                ### Put calculating codes
+                ### Maybe using current steering_angle and desired steering..
+
+                # Example
+                steer = msg.steering_angle
+                self.steer_pub.publish(steer)
+
+            else: 
+                pass
+
+    def send_steering_cmd(self):
         if self.steering_control:
-            desired_steering = msg.steering_angle
-            ### Put calculating codes
-            # Maybe using current steeing angle and desired steering..
+            self.calculate_steering(self.desired_steering)
 
-            # Example
-            steer = 0.3  # Change this value as needed
-            self.steer_pub.publish(Float32(steer))
-            # Log the desired steering
-            # rospy.loginfo("Desired Steering Angle: %.2f", desired_steering)
-        else: 
-            pass
-
+    def run(self):
+        self.init_communication()
+        loop = rospy.Rate(10.0)  
+        while not rospy.is_shutdown():
+            self.send_steering_cmd()
+            loop.sleep()
 
 if __name__ == "__main__":
+    rospy.init_node("steering_node")
     steering_node = SteeringNode()
-    rospy.spin()
+    steering_node.run()
