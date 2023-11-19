@@ -1,8 +1,8 @@
-from Serwo_Parametrs import *
+from steering_controller.servo_parameters import *
 import RPi.GPIO as GPIO
 import time
 
-class SerwoMotor:
+class ServoMotor:
 
     def __init__(self):
         self.pwm_frequency = 0

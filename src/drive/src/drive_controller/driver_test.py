@@ -1,17 +1,17 @@
 import RPi.GPIO as GPIO
 from time import sleep
-import Controller
-import Motor
-from Encoder import Encoder
-from Driver_Parameters import *
+from drive_controller.controller import Controller
+from drive_controller.motor import Motor
+from drive_controller.encoder import Encoder
+from drive_controller.driver_parameters import *
 
 t1 = []
 y1 = []
 i = 0
 sp = 30
 e1 = Encoder(dt,clk)
-M1 = Motor.Motor
-C1 = Controller.Controller
+M1 = Motor()
+C1 = Controller()
 C1.parameterize(C1, k, t, tp)  #0.9,0.3 /0.92,0.8
 PWM = M1.configure(M1,in1,in2,en,100)
 M1.change_direction(M1,"Forward")

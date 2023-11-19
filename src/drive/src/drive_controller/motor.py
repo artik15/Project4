@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-from Driver_Parameters import *
+from drive_controller.driver_parameters import *
 
 class Motor:
     MotorIn1 = 0

@@ -2,6 +2,7 @@
 
 import rospy
 from manager.msg import SteeringControl
+from steering_controller.controller import ControllerSteering
 from std_msgs.msg import Float32
 
 class SteeringNode:
@@ -9,7 +10,7 @@ class SteeringNode:
         self.control_enabled = False
         # Initialize the SteeringNode as a ROS node.
         rospy.init_node("steering_node")
-
+        self.controller = ControllerSteering()
         # Create a subscriber for the "steering/speed_control" topic.
         rospy.Subscriber("/steering/steering_control", SteeringControl, self.steering_speed_control_callback)
 

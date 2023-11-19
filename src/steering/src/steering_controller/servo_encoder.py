@@ -1,9 +1,9 @@
-import smbus
+import smbus2 as smbus
 import RPi.GPIO as GPIO
-from Serwo_Parametrs import *
-from biny import *
+from steering_controller.servo_parameters import *
+from steering_controller.bins import *
 
-class SerwoEncoder:
+class ServoEncoder:
 
     def __init__(self) -> None:
         self.first_angle = 0.0

@@ -1,6 +1,5 @@
-from Serwo_Parametrs import *
-
-class ControllerSteering:
+from drive_controller.driver_parameters import *
+class Controller:
     k = 0.0     # Gain
     Ti = 0.0    # Integral Constant
     Tp = 0.0    # Sampling period
@@ -42,11 +41,11 @@ class ControllerSteering:
         cv = self.k * (error_k + (self.Tp/self.Ti)*(self.integral_sum))
         
         ## limiting the control value and Anti-windup mechanism
-        if cv >= right_angle_limit:
-            cv = right_angle_limit
+        if cv >= upper_limit:
+            cv = upper_limit
             self.integral_sum = self.integral_sum - error_k
-        if cv <= left_angle_limit:
-            cv = left_angle_limit
+        if cv <= lower_limit:
+            cv = lower_limit
             self.integral_sum = self.integral_sum - error_k
 
         return cv
