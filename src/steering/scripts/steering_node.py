@@ -2,6 +2,7 @@
 
 import rospy
 from manager.msg import SteeringControl
+from steering_controller.controller import ControllerSteering
 from std_msgs.msg import Float32
 
 class SteeringNode:
