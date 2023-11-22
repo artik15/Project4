@@ -9,6 +9,7 @@ class SteeringNode:
     def __init__(self) -> None:
         self.steering_control: bool = False
         self.desired_steering = SteeringControl()
+        self.controller = ControllerSteering()
 
     def init_communication(self) -> None:
         self.steer_pub = rospy.Publisher("/manager/steering", Float32, queue_size=10)
