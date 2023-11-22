@@ -80,7 +80,7 @@ class ManagerNode:
             return
         
         if new_throttle <= 0.0:
-            self.control_cmd.throttle = 0.0
+            self.control_cmd.throttle = -1.0
         elif new_throttle >= 1.0:
             self.control_cmd.throttle = 1.0
         else:
