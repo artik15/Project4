@@ -49,10 +49,10 @@ def control_node():
             linear_vel -= 1
         elif key == 'a':
             # Increase angular velocity
-            angular_vel += 1
+            angular_vel -= 1
         elif key == 'd':
             # Decrease angular velocity
-            angular_vel -= 1
+            angular_vel += 1
         elif key == ' ' or key == 'x':
             # Stop the vehicle
             linear_vel = 0
