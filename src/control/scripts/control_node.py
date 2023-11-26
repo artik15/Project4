@@ -5,11 +5,11 @@ import sys, select, termios, tty
 from std_msgs.msg import String, Float32
 from manager.msg import SpeedControl, SteeringControl  # Import the new message types
 
-ROSCAR_MAX_ACCELL_VEL = 20
-ROSCAR_MAX_STEERING_VEL = 50
+ROSCAR_MAX_ACCELL_VEL = 60
+ROSCAR_MAX_STEERING_VEL = 1.0
 
-ROSCAR_MIN_ACCELL_VEL = -20
-ROSCAR_MIN_STEERING_VEL = -50
+ROSCAR_MIN_ACCELL_VEL = 0
+ROSCAR_MIN_STEERING_VEL = -1.0
 
 def getKey():
     # Define and store the initial terminal settings
@@ -49,10 +49,10 @@ def control_node():
             linear_vel -= 1
         elif key == 'a':
             # Increase angular velocity
-            angular_vel -= 1
+            angular_vel -= 0.05
         elif key == 'd':
             # Decrease angular velocity
-            angular_vel += 1
+            angular_vel += 0.05
         elif key == ' ' or key == 'x':
             # Stop the vehicle
             linear_vel = 0

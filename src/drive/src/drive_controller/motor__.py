@@ -21,6 +21,9 @@ class Motor:
         GPIO.setup(self.MotorEn,GPIO.OUT)
         PWM = GPIO.PWM(self.MotorEn,ext_PWM_freq)
         PWM.start(starting_speed)
+
+        GPIO.setup(21,GPIO.OUT)
+        GPIO.output(21,GPIO.HIGH)
         return PWM
 
     def change_direction(self,ext_direction) -> None:

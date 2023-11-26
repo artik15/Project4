@@ -20,7 +20,7 @@ class ServoMotor:
     def change_angle(self, pwm, ext_angle) -> None:
         if ext_angle >= left_angle_limit and ext_angle <= right_angle_limit:
             pwm.ChangeDutyCycle(ext_angle)
-            time.sleep(time_sleep_change_angle)
+            #time.sleep(time_sleep_change_angle)
 
     def stop(self):
         GPIO.cleanup()
