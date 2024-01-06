@@ -2,41 +2,56 @@
 
 import rospy
 from manager.msg import SteeringControl
+import steering_controller.servo_motor as ServoMotor
 from steering_controller.controller import ControllerSteering
+from steering_controller.servo_parameters import *
 from std_msgs.msg import Float32
 
 class SteeringNode:
-    def __init__(self):
-        self.control_enabled = False
-        # Initialize the SteeringNode as a ROS node.
-        rospy.init_node("steering_node")
-        self.controller = ControllerSteering()
-        # Create a subscriber for the "steering/speed_control" topic.
-        rospy.Subscriber("/steering/steering_control", SteeringControl, self.steering_speed_control_callback)
+    def __init__(self) -> None:
+        self.steering_control: bool = False
+        self.current_steer = 0
+        self.desired_steering = SteeringControl()
 
-        # Create a publisher for the "desired_steering" topic.
-        self.desired_steering_pub = rospy.Publisher("/manager/steering", Float32, queue_size=10)
+    def init_communication(self) -> None:
+        # self.steer_pub = rospy.Publisher("/manager/steering", Float32, queue_size=10)
+        rospy.Subscriber("/steering/steering_control", SteeringControl, self.steering_control_callback)
+        rospy.Subscriber("/steering/current_steer", Float32, self.current_steer_callback)
 
-    # Callback function for the "steering/speed_control" topic.
-    def steering_speed_control_callback(self, msg):
-        self.control_enabled = msg.enabled
-        # Set the received steering angle command as the desired steering angle
-        desired_steering = msg.steering_angle
+        
+    def steering_control_callback(self, msg):
+        print(msg)
+        self.enable_steering_control(msg.enabled)
 
-        # Log the desired steering angle
-        rospy.loginfo("Desired Steering Angle: %.2f", desired_steering)
+    def current_steer_callback(self, msg):
+        self.current_steer = msg.data
 
-    # Function to perform steering actions based on the desired steering angle
-    def perform_steering_action(self):
-        # Implement your custom steering actions here based on the desired steering angle
-        pass
+    def enable_steering_control(self, enable: bool):
+        self.steering_control = enable
+
+    def calculate_steering(self, current_steer: Float32):
+        if self.steering_control:
+            steer = 2.1*current_steer + 7    
+        else: 
+            steer = 7
+        #print(steer)
+        return steer
+
+    # def send_steering_cmd(self):
+    #     if self.steering_control:
+    #         self.calculate_steering(self.desired_steering)
 
     def run(self):
-        loop = rospy.Rate(10.0) # frequency in Hz
+        self.init_communication()
+        loop = rospy.Rate(10.0)
+        S1 = ServoMotor.ServoMotor()
+        pwm = S1.configure(servo_pin, pwm_frequency)
         while not rospy.is_shutdown():
-            self.perform_steering_action()
+            steer = self.calculate_steering(self.current_steer)
+            S1.change_angle(pwm, steer)
             loop.sleep()
 
 if __name__ == "__main__":
+    rospy.init_node("steering_node")
     steering_node = SteeringNode()
     steering_node.run()
